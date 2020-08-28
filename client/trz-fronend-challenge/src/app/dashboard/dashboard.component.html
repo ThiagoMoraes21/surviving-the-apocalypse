@@ -1,0 +1,134 @@
+<div class="row">
+    <div class="col-md-6 col-sm-12">
+        <nb-card class="card">
+            <nb-card-header>Register a New Survivor</nb-card-header>
+            <nb-card-body>
+                <nb-stepper #stepper>
+                    <nb-step [stepControl]="firstForm" label="Survivor Data">
+                        <form [formGroup]="firstForm" class="step-container">
+                            <p class="lorem">
+                                Hello there! To register a new survivor you must provide some
+                                basic information.
+                            </p>
+                            <div class="input-group">
+                                <input nbInput type="text" placeholder="Enter your name" class="form-control"
+                                    status="primary" formControlName="name"
+                                    [ngClass]="{'form-control-danger': firstForm.invalid && (firstForm.dirty || firstForm.touched)}">
+
+                                <input nbInput type="number" placeholder="Enter your age" class="form-control"
+                                    status="primary" formControlName="age"
+                                    [ngClass]="{'form-control-danger': firstForm.invalid && (firstForm.dirty || firstForm.touched)}">
+
+                                <nb-select placeholder="Select your gender" class="form-select" status="primary"
+                                    formControlName="gender"
+                                    [ngClass]="{'form-control-danger': firstForm.invalid && (firstForm.dirty || firstForm.touched)}">
+                                    <nb-option *ngFor="let gender of genders" [value]="gender.value">
+                                        {{gender.type}}
+                                    </nb-option>
+                                </nb-select>
+                            </div>
+                            <button nbButton type="button" status="primary" nbStepperNext>next</button>
+                        </form>
+                    </nb-step>
+                    <nb-step [stepControl]="secondForm" label="Inventory">
+                        <form [formGroup]="secondForm" class="step-container">
+                            <p class="lorem">
+                                Informe the amount of each item that you have with you.
+                            </p>
+                            <div class="input-group">
+                                <input nbInput type="number" placeholder="Fiji Water" class="form-control"
+                                    status="primary" formControlName="Fiji Water"
+                                    [ngClass]="{'form-control-danger': secondForm.invalid && (secondForm.dirty || secondForm.touched)}">
+
+                                <input nbInput type="number" placeholder="Campbell Soup" class="form-control"
+                                    status="primary" formControlName="Campbell Soup"
+                                    [ngClass]="{'form-control-danger': secondForm.invalid && (secondForm.dirty || secondForm.touched)}">
+
+                                <input nbInput type="number" placeholder="First Aid Pouch" class="form-control"
+                                    status="primary" formControlName="First Aid Pouch"
+                                    [ngClass]="{'form-control-danger': secondForm.invalid && (secondForm.dirty || secondForm.touched)}">
+
+                                <input nbInput type="number" placeholder="AK47" class="form-control" status="primary"
+                                    formControlName="AK47"
+                                    [ngClass]="{'form-control-danger': secondForm.invalid && (secondForm.dirty || secondForm.touched)}">
+                            </div>
+                            <button nbButton type="button" nbStepperPrevious>prev</button>
+                            <button nbButton type="button" status="primary" nbStepperNext>next</button>
+                        </form>
+                    </nb-step>
+                    <nb-step [stepControl]="thirdForm" label="Confirm your data">
+                        <form [formGroup]="thirdForm" class="step-container">
+                            <h4>Confirm Your Data</h4>
+                            <p class="hint">*you can change your location in the map</p>
+                            <nb-card status="primary">
+                                <nb-card-header>
+                                    Location
+                                </nb-card-header>
+                                <nb-list>
+                                    <nb-list-item *ngFor="let info of getLocation()">
+                                        {{ info.title }}: {{ info.value }}
+                                    </nb-list-item>
+                                </nb-list>
+                            </nb-card>
+                            <nb-card status="primary">
+                                <nb-card-header>
+                                    Personal Data
+                                </nb-card-header>
+                                <nb-list>
+                                    <nb-list-item *ngFor="let survivor of getPersonalInfo()">
+                                        {{ survivor.title }}: {{ survivor.value }}
+                                    </nb-list-item>
+                                </nb-list>
+                            </nb-card>
+                            <nb-card status="primary">
+                                <nb-card-header>
+                                    Inventory
+                                </nb-card-header>
+                                <nb-list>
+                                    <nb-list-item *ngFor="let item of getInventory()">
+                                        {{ item.title }}: {{ item.value }}
+                                    </nb-list-item>
+                                </nb-list>
+                            </nb-card>
+                            <button nbButton type="button" nbStepperPrevious>prev</button>
+                            <button nbButton type="button" nbStepperNext (click)="submit()">Confirm</button>
+                        </form>
+                    </nb-step>
+                    <nb-step [stepControl]="thirdForm" [hidden]="true" label="Third step">
+                        <div class="step-container">
+                            <h3>Wizard completed!</h3>
+                            <button nbButton type="button" (click)="stepper.reset(); resetDashboard()">Register New
+                                Survivor</button>
+                        </div>
+                    </nb-step>
+                </nb-stepper>
+            </nb-card-body>
+        </nb-card>
+        <nb-card status="primary" *ngIf="survivor" class="card">
+            <nb-card-header>
+                Survivor's Data
+            </nb-card-header>
+            <nb-list>
+                <nb-list-item *ngFor="let info of getSurvivorInfo()">
+                    {{ info.title }}: {{ info.value }}
+                </nb-list-item>
+            </nb-list>
+        </nb-card>
+    </div>
+    <div class="col-md-6 col-sm-12">
+        <nb-card class="card">
+            <nb-card-header>Survivor's Location</nb-card-header>
+            <nb-card-body class="card-map">
+                <agm-map [latitude]="location.latitude" [longitude]="location.longitude"
+                    (mapClick)="mapClicked($event)" [styles]="mapStyles">
+                    <agm-marker [latitude]="location.latitude" [longitude]="location.longitude"></agm-marker>
+                </agm-map>
+            </nb-card-body>
+            <nb-card-footer *ngIf="survivor">
+                <p class="map-location">Location: {{ location.latitude }} {{ location.longitude }}</p>
+                <button nbButton type="button" status="primary" class="btn-update-location"
+                    (click)="updateSuvivorLocation()">Update My Location</button>
+            </nb-card-footer>
+        </nb-card>
+    </div>
+</div>

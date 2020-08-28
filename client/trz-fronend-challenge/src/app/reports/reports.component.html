@@ -1,0 +1,28 @@
+<div class="row">
+    <div *ngIf="options" class="col-md-6 col-sm-12">
+        <nb-card>
+            <nb-card-header>Average of Infected and Non-Infected Survivors</nb-card-header>
+            <nb-card-body>
+                <div echarts [options]="options" class="echart"></div>
+            </nb-card-body>
+        </nb-card>
+    </div>
+
+    <div *ngIf="itemPerSurvivorOptions" class="col-md-6 col-sm-12">
+        <nb-card>
+            <nb-card-header>Average of the quantity of items per survivor</nb-card-header>
+            <nb-card-body>
+                <div echarts [options]="itemPerSurvivorOptions" class="echart"></div>
+            </nb-card-body>
+        </nb-card>
+    </div>
+
+    <div *ngIf="pointsLost !== undefined" class="col-md-6 col-sm-12">
+        <nb-card>
+            <nb-card-header>Total points lost in items that belong to infected people</nb-card-header>
+            <nb-card-body>
+                <h6>Total Points Lost: {{ pointsLost }}</h6>
+            </nb-card-body>
+        </nb-card>
+    </div>
+</div>

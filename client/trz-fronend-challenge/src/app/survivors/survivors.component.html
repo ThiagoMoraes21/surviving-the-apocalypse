@@ -1,0 +1,62 @@
+<ng-template #dialog let-data let-ref="dialogRef">
+	<nb-card class="model-full">
+		<nb-card-header>
+			Template Dialog
+		</nb-card-header>
+		<nb-card-body>
+			<nb-stepper #stepper>
+				<nb-step [stepControl]="firstForm" label="Select your pick">
+					<form [formGroup]="firstForm" class="step-container">
+						<div *ngFor="let item of data.person.invetory" class="input-group">
+							<label [for]="item.name">Quantity: {{ item.quantity }} | Unit points: {{ item.points }}</label>
+							<input nbInput type="number" [placeholder]="item.name" class="form-control" [id]="item.name"
+								status="primary" [formControlName]="item.name"
+								[ngClass]="{'form-control-danger': secondForm.invalid && (secondForm.dirty || secondForm.touched)}"
+								(input)="getPoints(firstForm, 'total', item)">
+						</div>
+						<div class="stepper-btns">
+							<button nbButton type="button" [disabled]="validInputs('total')" nbStepperNext>next</button>
+						</div>
+					</form>
+				</nb-step>
+				<nb-step [stepControl]="secondForm" label="Payment">
+					<form [formGroup]="secondForm" class="step-container">
+						<div *ngFor="let item of data.consumer.invetory" class="input-group">
+							<label [for]="item.name">Quantity: {{ item.quantity }} | Unit points: {{ item.points }}</label>
+							<input nbInput type="number" [placeholder]="item.name" class="form-control" [id]="item.name"
+								status="primary" [formControlName]="item.name"
+								[ngClass]="{'form-control-danger': secondForm.invalid && (secondForm.dirty || secondForm.touched)}"
+								(input)="getPoints(secondForm, 'payment', item)">
+						</div>
+						<div class="stepper-btns">
+							<button nbButton type="button" nbStepperPrevious>prev</button>
+						</div>
+					</form>
+				</nb-step>
+			</nb-stepper>
+		</nb-card-body>
+		<nb-card-footer>
+			<div class="points">
+				<p>Total Points: {{ total }}</p>
+				<p>Payment Points: {{ payment }}</p>
+			</div>
+			<div class="stepper-btns">
+				<button nbButton type="button" (click)="ref.close()">Cancel</button>
+				<button nbButton status="primary" type="button" (click)="tradeItems(); stepper.reset(); ref.close();"
+				[disabled]="validInputs('payment') || validPayment()">Trade Items</button>
+			</div>
+		</nb-card-footer>
+	</nb-card>
+</ng-template>
+
+<nb-card>
+	<nb-card-header>
+		Survivors
+	</nb-card-header>
+
+	<nb-card-body>
+		<ng2-smart-table [settings]="settings" [source]="data" (edit)="initTrade($event, dialog)"
+			(delete)="reportInfection($event)">
+		</ng2-smart-table>
+	</nb-card-body>
+</nb-card>

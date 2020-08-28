@@ -1,0 +1,27 @@
+<nb-card *ngIf="noAccess || infected" status="primary" class="waring-card">
+    <nb-card-header>
+        Oh no...
+    </nb-card-header>
+
+    <nb-card-body>
+        <div *ngIf="infected" class="infected">
+            <p>It appears that you was infected by the T-virus, so you no longer have access to this inventory :c</p>
+            <button nbButton status="primary" type="button" (click)="goHome()">Go Home</button>
+        </div>
+
+        <div *ngIf="noAccess" class="noAccess">
+            <p>To access this area you must first register yourself, you can do this in the home page :)</p>
+            <button nbButton status="primary" type="button" (click)="goHome()">Go Home</button>
+        </div>
+    </nb-card-body>
+</nb-card>
+
+<nb-card *ngIf="!noAccess" status="primary">
+    <nb-card-header>
+        Inventory
+    </nb-card-header>
+
+    <nb-card-body>
+        <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
+    </nb-card-body>
+</nb-card>

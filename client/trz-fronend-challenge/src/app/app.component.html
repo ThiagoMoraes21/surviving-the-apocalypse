@@ -1,0 +1,27 @@
+<nb-layout>
+
+	<nb-layout-header fixed>
+		<button nbButton size="medium" status="primary" (click)="toggleMenu()">
+			<nb-icon icon="menu-outline"></nb-icon>
+		</button>
+		<a href="dashboard" class="logo">
+			The Resident Zombie
+			<!-- <h4></h4> -->
+		</a>
+	</nb-layout-header>
+
+	<nb-sidebar tag="left">
+		<nb-menu [items]="menu"></nb-menu>
+	</nb-sidebar>
+
+	<nb-layout-column>
+		<router-outlet></router-outlet>
+	</nb-layout-column>
+
+	<nb-layout-footer fixed>
+		<span class="created-by">
+			Created with ♥ by <b><a href="https://github.com/ThiagoMoraes21" target="_blank">Thiago</a></b>.
+		</span>
+	</nb-layout-footer>
+
+</nb-layout>
