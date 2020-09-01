@@ -10,8 +10,8 @@
     "start": "node index.js",
     "test": "jest",
     "server": "nodemon index.js --ignore tests",
-    "client": "cd ./client && npm start",
-    "start-dev": "concurrently \"npm run server\" \"npm run client\""
+    "client": "npm run start --prefix client",
+    "start-dev": "concurrently \"sudo npm run server\" \"npm run client\""
   },
   "repository": {
     "type": "git",
