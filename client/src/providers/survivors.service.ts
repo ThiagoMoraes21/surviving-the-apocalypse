@@ -4,7 +4,7 @@ import { HttpService } from './http.service';
 @Injectable({
 	providedIn: 'root'
 })
-export class PeopleService {
+export class SurvivorsService {
 
 	constructor(
 		private http: HttpService
@@ -12,7 +12,7 @@ export class PeopleService {
 
 	reportInfection(data: any) {
 		return new Promise((resolve, reject) => {
-			this.http.post(`people/${data.id}/report_infection.json`, false, data).then(res => {
+			this.http.post(`/api/survivors/flag_survivor`, false, data).then(res => {
 				resolve(res);
 			}).catch(err => reject(err));
 		});
@@ -20,16 +20,15 @@ export class PeopleService {
 
 	getSurvivors() {
 		return new Promise((resolve, reject) => {
-			this.http.get(`people.json`, false).then(res => {
+			this.http.get(`/api/survivors`, false).then(res => {
 				resolve(res);
 			}).catch(err => reject(err));
 		});
 	}
 
 	registerSuvivor(data: any) {
-		console.log('PARAMS: ', data);
 		return new Promise((resolve, reject) => {
-			this.http.post(`people.json`, false, data).then(res => {
+			this.http.post(`/api/survivors`, false, data).then(res => {
 				resolve(res);
 			}).catch(err => reject(err));
 		});
@@ -45,7 +44,7 @@ export class PeopleService {
 
 	updateSuvivor(data: any) {
 		return new Promise((resolve, reject) => {
-			this.http.patch(`people/${data.id}.json`, false, data).then(res => {
+			this.http.patch(`/api/survivors`, false, data).then(res => {
 				resolve(res);
 			}).catch(err => reject(err));
 		});

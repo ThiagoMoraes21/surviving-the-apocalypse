@@ -1,6 +1,6 @@
 import { Injectable, Inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { ENV } from "../../environments/environment-variables.token";
+import { ENV } from "../environments/environment-variables.token";
 import { Observable, of, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -79,17 +79,12 @@ export class HttpService {
 			params = [url, { headers }];
 		}
 
-		// if (this.count < 1) { this.showLoader(); }
 		this.count++;
 		return new Promise((resolve, reject) => {
 			this.http[method](...params)
 				.subscribe(res => {
-					// this.count--;
-					// if (this.count === 0) { setTimeout(() => { this.hideLoader(); }, 1000); }
 					resolve(res);
 				}, (err) => {
-					// this.count--;
-					// if (this.count === 0) { setTimeout(() => { this.hideLoader(); }, 1000); }
 					if (err.error.message) return reject(err.error.message)
 					reject(err);
 				});

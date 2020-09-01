@@ -24,7 +24,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { ReportsComponent } from './reports/reports.component';
 import { InventoryComponent } from './inventory/inventory.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { HttpService } from './providers/http.service';
+import { HttpService } from '../providers/http.service';
 import { map } from 'rxjs/operators';
 import { HttpClientModule } from '@angular/common/http';
 import { environment } from 'src/environments/environment';

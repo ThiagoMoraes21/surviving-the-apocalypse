@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { PropertiesService } from '../providers/properties.service';
+import { PropertiesService } from '../../providers/properties.service';
 import { UtilsProvider } from '../commons/utils';
-import { PeopleService } from '../providers/people.service';
+import { SurvivorsService } from '../../providers/survivors.service';
 import { Router } from '@angular/router';
 import { ToasterProvider } from '../commons/toaster';
 
@@ -43,7 +43,7 @@ export class InventoryComponent implements OnInit {
 	constructor(
 		private propertiesService: PropertiesService,
 		private utils: UtilsProvider,
-		private survivorService: PeopleService,
+		private survivorService: SurvivorsService,
 		private router: Router,
 		private toaster: ToasterProvider
 	) { }

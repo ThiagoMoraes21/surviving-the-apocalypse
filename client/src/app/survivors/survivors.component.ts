@@ -1,11 +1,11 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { PeopleService } from '../providers/people.service';
+import { SurvivorsService } from '../../providers/survivors.service';
 import { UtilsProvider } from '../commons/utils';
 import { Router } from '@angular/router';
 import { NbDialogService } from '@nebular/theme';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { PropertiesService } from '../providers/properties.service';
+import { PropertiesService } from '../../providers/properties.service';
 import { ToasterProvider } from '../commons/toaster';
 
 @Component({
@@ -61,7 +61,7 @@ export class SurvivorsComponent implements OnInit {
 	public consumer: any;
 
 	constructor(
-		private survivorService: PeopleService,
+		private survivorService: SurvivorsService,
 		private propertiesService: PropertiesService,
 		private utils: UtilsProvider,
 		private router: Router,

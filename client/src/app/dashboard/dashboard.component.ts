@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { PeopleService } from '../providers/people.service';
+import { SurvivorsService } from '../../providers/survivors.service';
 import { UtilsProvider } from '../commons/utils';
 import {AgmMap, MapsAPILoader, MouseEvent  } from '@agm/core';  
 import { ToasterProvider } from '../commons/toaster';
@@ -36,7 +36,7 @@ export class DashboardComponent implements OnInit {
 	@ViewChild(AgmMap,{static: true}) public agmMap: AgmMap;  
 	constructor(
 		private _formBuilder: FormBuilder,
-		private survivorService: PeopleService,
+		private survivorService: SurvivorsService,
 		private utils: UtilsProvider,
 		private apiloader: MapsAPILoader,
 		private toaster: ToasterProvider
@@ -159,9 +159,6 @@ export class DashboardComponent implements OnInit {
 		if (navigator.geolocation) {  
 			navigator.geolocation.getCurrentPosition((position: Position) => {  
 				if (position) {  
-					// this.location.latitude = position.coords.latitude;  
-					// this.location.longitude = position.coords.longitude;  
-
 					const latitude = this.location.latitude ? this.location.latitude : position.coords.latitude;
 					const longitude = this.location.latitude ? this.location.longitude : position.coords.longitude;
 

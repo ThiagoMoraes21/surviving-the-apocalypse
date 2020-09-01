@@ -5,5 +5,5 @@
 export const environment = {
 	production: false,
 	loading: false,
-	API_URL: "http://zssn-backend-example.herokuapp.com/api"
+	API_URL: "http://192.168.15.6"
 };

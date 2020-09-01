@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
 import { UtilsProvider } from '../commons/utils';
-import { ReportsService } from '../providers/reports.service';
+import { ReportsService } from '../../providers/reports.service';
 import { ToasterProvider } from '../commons/toaster';
 
 @Component({

@@ -13,7 +13,6 @@ module.exports = app => {
     * @returns {Object} code 500 (Internal Server Error)
     */
     app.get('/api/survivors', async (req, res) => {
-        // searches for all the survivors on the data base
         const [err_find_survivors, survivors] = await tryCatch(
             Survivor
                 .find({})
@@ -22,7 +21,6 @@ module.exports = app => {
                 .exec()
         );
 
-        // handles find query error
         if (err_find_survivors)
             return res.status(500).json({
                 message: 'An error occurred while fetching survivors, please try again later.',
@@ -66,9 +64,7 @@ module.exports = app => {
             const { name, age, gender, last_location, items } = req.body;
             const new_items = [];
 
-            // Creates a new inventory
             for (const item in items) {
-                // Validates if the items match the existing items of our inventory
                 if (items_list[item])
                     new_items.push({
                         name: item,
@@ -77,7 +73,6 @@ module.exports = app => {
                     });
             }
 
-            // saves the new inventory into the database
             const [err_creating_inventory, inventory] = await tryCatch(
                 Inventory.create({ items: new_items })
             );
@@ -88,7 +83,6 @@ module.exports = app => {
                     err_creating_inventory
                 });
 
-            // Creates a new survivor
             const new_survivor = new Survivor({
                 name,
                 age,
@@ -141,7 +135,6 @@ module.exports = app => {
         async (req, res) => {
             const { _id, last_location } = req.body;
 
-            // setup of options and query parameters
             const options = { upsert: true, new: true };
             const params = {
                 last_location: {
@@ -150,7 +143,6 @@ module.exports = app => {
                 }
             }
 
-            // updates survivors document
             const [err_update_survivor, survivor] = await tryCatch(
                 Survivor.findOneAndUpdate({ _id: mongoose.Types.ObjectId(_id) }, params, options).exec()
             );
@@ -194,7 +186,6 @@ module.exports = app => {
         async (req, res) => {
             const { _id, infected } = req.body;
 
-            // Gets the flagged survivors document
             const [err_find_survivor, survivor] = await tryCatch(
                 Survivor.findOne({ _id: mongoose.Types.ObjectId(infected) }).lean().exec()
             );
@@ -205,17 +196,12 @@ module.exports = app => {
                     err_find_survivor
                 });
 
-            // Checks if the infected survivor alread was flagged by the current survivor, if yes
-            // return a "forbidden" message.
             const already_flagged_by = survivor.flagged_by.find(el => String(el) === String(_id));
             if (already_flagged_by || String(_id) === String(infected))
                 return res.status(403).json({
                     message: `Nop, either you already flagged or you're trying to flag yourself as infected...`
                 });
 
-            // Query and options setup before update survivor,
-            // checks if the survivor was flagged by 5 or more people, if yes
-            // sets "is_infected" to "true", otherwise sets it to "false"
             const options = { upsert: true };
             const params = {
                 is_infected: survivor.flagged_by.length + 1 >= 5 ? true : false,
@@ -224,7 +210,6 @@ module.exports = app => {
                 }
             }
 
-            // Flag survivor as infected
             const [err_flagging_survivor, flagged_survivor] = await tryCatch(
                 Survivor.findOneAndUpdate({ _id: mongoose.Types.ObjectId(infected) }, params, options).exec()
             );
