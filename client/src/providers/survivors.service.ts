@@ -12,7 +12,7 @@ export class SurvivorsService {
 
 	reportInfection(data: any) {
 		return new Promise((resolve, reject) => {
-			this.http.post(`/api/survivors/flag_survivor`, false, data).then(res => {
+			this.http.post(`api/survivors/flag_survivor`, false, data).then(res => {
 				resolve(res);
 			}).catch(err => reject(err));
 		});
@@ -20,7 +20,7 @@ export class SurvivorsService {
 
 	getSurvivors() {
 		return new Promise((resolve, reject) => {
-			this.http.get(`/api/survivors`, false).then(res => {
+			this.http.get(`api/survivors`, false).then(res => {
 				resolve(res);
 			}).catch(err => reject(err));
 		});
@@ -28,7 +28,7 @@ export class SurvivorsService {
 
 	registerSuvivor(data: any) {
 		return new Promise((resolve, reject) => {
-			this.http.post(`/api/survivors`, false, data).then(res => {
+			this.http.post(`api/survivors`, false, data).then(res => {
 				resolve(res);
 			}).catch(err => reject(err));
 		});
@@ -36,7 +36,7 @@ export class SurvivorsService {
 
 	getSurvivor(id: string) {
 		return new Promise((resolve, reject) => {
-			this.http.get(`people/${id}.json`, false).then(res => {
+			this.http.get(`api/survivor/${id}`, false).then(res => {
 				resolve(res);
 			}).catch(err => reject(err));
 		});
@@ -44,7 +44,7 @@ export class SurvivorsService {
 
 	updateSuvivor(data: any) {
 		return new Promise((resolve, reject) => {
-			this.http.patch(`/api/survivors`, false, data).then(res => {
+			this.http.patch(`api/survivors`, false, data).then(res => {
 				resolve(res);
 			}).catch(err => reject(err));
 		});

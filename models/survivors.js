@@ -15,7 +15,7 @@ const survivorSchema = new Schema({
         enum: ['M', 'F'],
         required: true
     },
-    last_location: { 
+    lonlat: { 
         latitude: {
             type: Number,
             required: true
@@ -25,15 +25,15 @@ const survivorSchema = new Schema({
             required: true
         }
     },
-    inventory_ref: {
+    inventoryRef: {
         type: Schema.Types.ObjectId,
         ref: 'Inventory'
     },
-    is_infected: {
+    isInfected: {
         type: Boolean,
         default: false
     },
-    flagged_by: [{
+    flaggedBy: [{
         type: Schema.Types.ObjectId,
         ref: 'Survivor'
     }]

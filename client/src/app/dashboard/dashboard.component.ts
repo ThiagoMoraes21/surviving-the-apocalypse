@@ -220,29 +220,37 @@ export class DashboardComponent implements OnInit {
 	async submit() {
 		const data = { ...this.firstForm.value };
 		const inventory = { ...this.secondForm.value }
-		let items = '';
 
-		for (const item in inventory) {
-			items += `${item}:${inventory[item]};`
-		}
+		data.items = inventory;
+		data.lonlat = { 
+			longitude: this.location.longitude,
+			latitude: this.location.latitude
+		};
 
-		data.items = items;
-		data.lonlat = `Point(${this.location.longitude} ${this.location.latitude})`;
-
+		console.log('DATA: ', data);
+		
+		// register the new survivors data
 		const [errRegisterSuvivor, newSurvivor] = await this.utils.tryCatch(
 			this.survivorService.registerSuvivor(data)
 		);
 
+		// handles error on survivor's creation
 		if (errRegisterSuvivor) {
-			this.toaster.showErrorToast("Erro ao atualizar localização", "Não foi possível atualizar sua localização, tente novamente mais tarde.");
-			return;
+			return this.toaster.showErrorToast(
+				"Erro ao atualizar localização",
+				"Não foi possível atualizar sua localização, tente novamente mais tarde."
+			);
 		}
 
+		// update survivor global variable with the new survivor's data
 		this.survivor = newSurvivor;
+		
+		// update localStore with the new survivor's data
 		localStorage.clear();
 		localStorage.setItem('current_survivor', JSON.stringify(newSurvivor));
 		localStorage.setItem('inventory', JSON.stringify(inventory));
-		this.toaster.showSuccessToast("Survivor was registered successfully!");
+
+		return this.toaster.showSuccessToast("Survivor was registered successfully!");
 	}
 
 }

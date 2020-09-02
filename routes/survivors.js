@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Survivor = require('../models/survivors');
 const Inventory = require('../models/inventory');
 const { tryCatch } = require('../services/utils');
-const { items_list } = require('../services/trades');
+const { itemsList } = require('../services/trades');
 const { validateParams } = require('../middlewares/validate_params');
 
 module.exports = app => {
@@ -13,18 +13,18 @@ module.exports = app => {
     * @returns {Object} code 500 (Internal Server Error)
     */
     app.get('/api/survivors', async (req, res) => {
-        const [err_find_survivors, survivors] = await tryCatch(
+        const [errFindSurvivors, survivors] = await tryCatch(
             Survivor
                 .find({})
-                .populate({ path: 'inventory_ref', model: Inventory })
+                .populate({ path: 'inventoryRef', model: Inventory })
                 .lean()
                 .exec()
         );
 
-        if (err_find_survivors)
+        if (errFindSurvivors)
             return res.status(500).json({
                 message: 'An error occurred while fetching survivors, please try again later.',
-                err_find_survivors
+                errFindSurvivors
             });
 
         res.status(200).send(survivors);
@@ -38,7 +38,7 @@ module.exports = app => {
     * @param {String} body.name Survivor name
     * @param {Number} body.age Survivor age
     * @param {String} body.gender Survivor gender
-    * @param {Object} body.last_location Survivor last location, in the form { latitude: 0000, longitude: -0.1009 }
+    * @param {Object} body.lonlat Survivor last location, in the form { latitude: 0000, longitude: -0.1009 }
     * @param {Object} body.items The list of items that the survivor has
     * @returns {Object} code 200 (Success)
     * @returns {Object} code 400 (Bad Request)
@@ -50,7 +50,7 @@ module.exports = app => {
                 name: { type: 'string' },
                 age: { type: 'number' },
                 gender: { type: 'string', enum: ['M', 'F'] },
-                last_location: {
+                lonlat: {
                     type: 'object',
                     minProperties: 2,
                     maxProperties: 2,
@@ -58,47 +58,47 @@ module.exports = app => {
                 },
                 items: { type: 'object' }
             },
-            required: ['name', 'age', 'gender', 'last_location', 'items']
+            required: ['name', 'age', 'gender', 'lonlat', 'items']
         }),
         async (req, res) => {
-            const { name, age, gender, last_location, items } = req.body;
-            const new_items = [];
-
+            const { name, age, gender, lonlat, items } = req.body;
+            const newItems = [];
+            console.log('PARAMS: ', name, age, gender, lonlat, items)
             for (const item in items) {
-                if (items_list[item])
-                    new_items.push({
+                if (itemsList[item])
+                    newItems.push({
                         name: item,
-                        points: parseInt(items[item] * items_list[item]),
+                        points: parseInt(items[item] * itemsList[item]),
                         amount: items[item]
                     });
             }
 
-            const [err_creating_inventory, inventory] = await tryCatch(
-                Inventory.create({ items: new_items })
+            const [errCreatingInventory, inventory] = await tryCatch(
+                Inventory.create({ items: newItems })
             );
 
-            if (err_creating_inventory)
+            if (errCreatingInventory)
                 return res.status(500).json({
                     message: 'An error occurred while creating the inventory.',
-                    err_creating_inventory
+                    errCreatingInventory
                 });
 
-            const new_survivor = new Survivor({
+            const newSurvivor = new Survivor({
                 name,
                 age,
                 gender,
-                last_location,
-                inventory_ref: mongoose.Types.ObjectId(inventory._id)
+                lonlat,
+                inventoryRef: mongoose.Types.ObjectId(inventory._id)
             });
 
-            const [err_creating_survivor, survivor] = await tryCatch(
-                new_survivor.save()
+            const [errCreatingSurvivor, survivor] = await tryCatch(
+                newSurvivor.save()
             );
 
-            if (err_creating_survivor)
+            if (errCreatingSurvivor)
                 return res.status(500).json({
                     message: 'An error occurred while registering the new survivor, please try again later.',
-                    err_creating_survivor
+                    errCreatingSurvivor
                 });
 
             res.status(200).json({ survivor, inventory });
@@ -110,7 +110,7 @@ module.exports = app => {
     * @description [PATCH] - Updates survivor's last location
     * @param {JSON} body 
     * @param {String} body._id Survivor id
-    * @param {Object} body.last_location Survivor last location, in the form { latitude: 0000, longitude: -0.1009 }
+    * @param {Object} body.lonlat Survivor last location, in the form { latitude: 0000, longitude: -0.1009 }
     * @returns {Object} code 200 (Success)
     * @returns {Object} code 400 (Bad Request)
     * @returns {Object} code 500 (Internal Server Error)
@@ -123,34 +123,34 @@ module.exports = app => {
                     maxLength: 24,
                     minLength: 24
                 },
-                last_location: {
+                lonlat: {
                     type: 'object',
                     minProperties: 2,
                     maxProperties: 2,
                     required: ['longitude', 'latitude']
                 }
             },
-            required: ['_id', 'last_location']
+            required: ['_id', 'lonlat']
         }),
         async (req, res) => {
-            const { _id, last_location } = req.body;
+            const { _id, lonlat } = req.body;
 
             const options = { upsert: true, new: true };
             const params = {
-                last_location: {
-                    latitude: last_location.latitude,
-                    longitude: last_location.longitude
+                lonlat: {
+                    latitude: lonlat.latitude,
+                    longitude: lonlat.longitude
                 }
             }
 
-            const [err_update_survivor, survivor] = await tryCatch(
+            const [errUpdateSurvivor, survivor] = await tryCatch(
                 Survivor.findOneAndUpdate({ _id: mongoose.Types.ObjectId(_id) }, params, options).exec()
             );
 
-            if (err_update_survivor)
+            if (errUpdateSurvivor)
                 return res.status(500).json({
                     message: `An error occurred while trying to update the survivor's register.`,
-                    err_update_survivor
+                    errUpdateSurvivor
                 });
 
             res.status(200).json({ message: `Survivor's register was updated successfully.`, survivor });
@@ -186,38 +186,38 @@ module.exports = app => {
         async (req, res) => {
             const { _id, infected } = req.body;
 
-            const [err_find_survivor, survivor] = await tryCatch(
+            const [errFindSurvivor, survivor] = await tryCatch(
                 Survivor.findOne({ _id: mongoose.Types.ObjectId(infected) }).lean().exec()
             );
 
-            if (err_find_survivor)
+            if (errFindSurvivor)
                 return res.status(500).json({
                     message: 'An error occurred while trying to find infected survivor.',
-                    err_find_survivor
+                    error: errFindSurvivor
                 });
 
-            const already_flagged_by = survivor.flagged_by.find(el => String(el) === String(_id));
-            if (already_flagged_by || String(_id) === String(infected))
+            const alreadyFlaggedBy = survivor.flaggedBy.find(el => String(el) === String(_id));
+            if (alreadyFlaggedBy || String(_id) === String(infected))
                 return res.status(403).json({
                     message: `Nop, either you already flagged or you're trying to flag yourself as infected...`
                 });
 
             const options = { upsert: true };
             const params = {
-                is_infected: survivor.flagged_by.length + 1 >= 5 ? true : false,
+                isInfected: survivor.flaggedBy.length + 1 >= 5 ? true : false,
                 $push: {
-                    flagged_by: mongoose.Types.ObjectId(_id)
+                    flaggedBy: mongoose.Types.ObjectId(_id)
                 }
             }
 
-            const [err_flagging_survivor, flagged_survivor] = await tryCatch(
+            const [errFlaggingSurvivor, flaggedSurvivor] = await tryCatch(
                 Survivor.findOneAndUpdate({ _id: mongoose.Types.ObjectId(infected) }, params, options).exec()
             );
 
-            if (err_flagging_survivor)
+            if (errFlaggingSurvivor)
                 return res.status(500).json({
                     message: 'An error occurred while trying to update the infected survivor.',
-                    err_flagging_survivor
+                    error: errFlaggingSurvivor
                 });
 
             res.status(200).json({ message: 'Survivor flagged successully!' });
