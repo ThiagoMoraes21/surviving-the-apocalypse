@@ -64,10 +64,13 @@ export class DashboardComponent implements OnInit {
 		});
 
 		if (this.survivor && this.survivor.lonlat) {
-			let lonlat = this.survivor.lonlat.replace(/point/gi, '');
-			lonlat = lonlat.replace(/[()]/g, '');
-			this.location.longitude = parseFloat(lonlat.trim().split(' ')[0]);
-			this.location.latitude = parseFloat(lonlat.trim().split(' ')[1]);
+			// let lonlat = this.survivor.lonlat.replace(/point/gi, '');
+			// lonlat = lonlat.replace(/[()]/g, '');
+			// this.location.longitude = parseFloat(lonlat.trim().split(' ')[0]);
+			// this.location.latitude = parseFloat(lonlat.trim().split(' ')[1]);
+			const lonLat = this.survivor.lonlat;
+			this.location.longitude = lonLat.longitude;
+			this.location.latitude = lonLat.latitude;
 		}
 
 		this.getCurrentLocation();
@@ -116,11 +119,14 @@ export class DashboardComponent implements OnInit {
 	getSurvivorInfo() {
 		const survivorData = { ...this.survivor };
 		const list = [];
-
-		delete survivorData.id;
+		console.log('SURVIVOR DATA: ', survivorData)
+		delete survivorData._id;
 		delete survivorData.created_at;
 		delete survivorData.updated_at;
 		delete survivorData.lonlat;
+		delete survivorData.flaggedBy;
+		delete survivorData.inventoryRef;
+		delete survivorData.__v;
 
 		for (const item in survivorData) {
 			list.push({
@@ -165,7 +171,7 @@ export class DashboardComponent implements OnInit {
 						this.location.longitude = this.location.longitude ? this.location.longitude : position.coords.longitude;
 						// const latitude = this.location.latitude ? this.location.latitude : position.coords.latitude;
 						// const longitude = this.location.latitude ? this.location.longitude : position.coords.longitude;
-						
+						console.log('LOCATION: ', this.location);
 						let geocoder = new google.maps.Geocoder;
 						let latlng = {
 							'lat': this.location.latitude,
@@ -197,10 +203,12 @@ export class DashboardComponent implements OnInit {
 	}
 
 	async updateSuvivorLocation() {
-		let params = this.survivor;
-		params.lonlat = `Point(${this.location.longitude} ${this.location.latitude})`;
+		let survivor = this.survivor;
+		let lonlat = { longitude: this.location.longitude, latitude: this.location.latitude };
+		console.log('SURVIVOR: ', survivor);
+		console.log('LON LAT: ', lonlat)
 		const [errUpdateLocation, newLocation] = await this.utils.tryCatch(
-			this.survivorService.updateSuvivor(params)
+			this.survivorService.updateSuvivor({ _id: survivor._id, lonlat })
 		);
 
 		if (errUpdateLocation) {
@@ -211,7 +219,7 @@ export class DashboardComponent implements OnInit {
 			return;
 		}
 
-		this.survivor = newLocation;
+		this.survivor = newLocation.survivor;
 		localStorage.removeItem('current_survivor');
 		localStorage.setItem('current_survivor', JSON.stringify(this.survivor));
 		this.toaster.showSuccessToast("Localização atualizada com sucesso!");
@@ -226,8 +234,6 @@ export class DashboardComponent implements OnInit {
 			longitude: this.location.longitude,
 			latitude: this.location.latitude
 		};
-
-		console.log('DATA: ', data);
 		
 		// register the new survivors data
 		const [errRegisterSuvivor, newSurvivor] = await this.utils.tryCatch(
@@ -243,11 +249,11 @@ export class DashboardComponent implements OnInit {
 		}
 
 		// update survivor global variable with the new survivor's data
-		this.survivor = newSurvivor;
+		this.survivor = newSurvivor.survivor;
 		
 		// update localStore with the new survivor's data
 		localStorage.clear();
-		localStorage.setItem('current_survivor', JSON.stringify(newSurvivor));
+		localStorage.setItem('current_survivor', JSON.stringify(newSurvivor.survivor));
 		localStorage.setItem('inventory', JSON.stringify(inventory));
 
 		return this.toaster.showSuccessToast("Survivor was registered successfully!");

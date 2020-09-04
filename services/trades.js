@@ -1,4 +1,4 @@
-const items_list = {
+const itemsList = {
     'Fiji Water': 14,
     'Campbell Soup': 12,
     'First Aid Pouch': 10,
@@ -12,7 +12,7 @@ const items_list = {
 const getPoints = list => {
     let totalPoints = 0;
     for (const item in list) {
-        totalPoints += items_list[item] * list[item];
+        totalPoints += itemsList[item] * list[item];
     }
     return totalPoints;
 }
@@ -58,11 +58,11 @@ const increaseItems = (insert_list, list) => {
         const list_item_index = new_list.findIndex(el => String(el.name) === String(item));
         if(list_item_index > -1) {
             new_list[list_item_index].amount += insert_list[item];
-            new_list[list_item_index].points = items_list[item] * new_list[list_item_index].amount;
+            new_list[list_item_index].points = itemsList[item] * new_list[list_item_index].amount;
         } else {
             new_list.push({
                 name: item,
-                points: items_list[item] * insert_list[item],
+                points: itemsList[item] * insert_list[item],
                 amount: insert_list[item] 
             });
         }
@@ -81,14 +81,14 @@ const decreaseItems = (remove_list, list) => {
         const list_item_index = new_list.findIndex(el => String(el.name) === String(item));
         if(list_item_index > -1) {
             new_list[list_item_index].amount -= remove_list[item];
-            new_list[list_item_index].points = items_list[item] * new_list[list_item_index].amount;
+            new_list[list_item_index].points = itemsList[item] * new_list[list_item_index].amount;
         }
     }
     return new_list;
 }
 
 module.exports = {
-    'items_list': items_list,
+    'itemsList': itemsList,
     'getPoints': getPoints,
     'validInventory': validInventory,
     'exchangeItems': exchangeItems

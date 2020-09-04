@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 80;
 const app = express();
+const cors = require("cors");
 
 // connecting to mongodb database
 mongoose.Promise = global.Promise;
@@ -10,6 +11,15 @@ mongoose.connect('mongodb://localhost:27017/trz_backend', { useNewUrlParser: tru
 
 // setup body-parse
 app.use(bodyParser.json());
+
+// setup cors policy
+app.use(cors());
+app.use(function (req, res, next) {
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Methods", "GET,HEAD,PUT,PATCH,POST,DELETE");
+	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	next();
+});
 
 // requiring routes
 require('./routes/survivors')(app);
